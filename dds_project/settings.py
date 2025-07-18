@@ -1,8 +1,11 @@
 from dotenv import load_dotenv
 import environ
 import os
+from pathlib import Path
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+BASE_DIR = Path(__file__).resolve().parent.parent
+
 env = environ.Env()
 environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 
@@ -11,7 +14,7 @@ API_NINJAS_KEY = env("API_NINJAS_KEY")
 load_dotenv(os.path.join(BASE_DIR, '.env'))
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'your-default-secret-key')
-DEBUG = True
+DEBUG = os.getenv('DEBUG', 'False') == 'True'
 ALLOWED_HOSTS = []
 LOGOUT_REDIRECT_URL = '/'
 INSTALLED_APPS = [
@@ -61,14 +64,11 @@ DB_NAME = os.getenv('DB_NAME', 'db.sqlite3')
 
 DATABASES = {
     'default': {
-        'ENGINE': DB_ENGINE,
-        'NAME': os.path.join(BASE_DIR, DB_NAME) if DB_ENGINE == 'django.db.backends.sqlite3' else DB_NAME,
-        'USER': os.getenv('DB_USER', ''),
-        'PASSWORD': os.getenv('DB_PASSWORD', ''),
-        'HOST': os.getenv('DB_HOST', ''),
-        'PORT': os.getenv('DB_PORT', ''),
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.getenv('DB_NAME', BASE_DIR / 'db.sqlite3')
     }
 }
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {

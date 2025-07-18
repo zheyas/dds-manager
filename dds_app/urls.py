@@ -1,13 +1,9 @@
-#dds_app/urls.py
+
 from django.urls import path
 from . import views
-from .views import auth_combined_view
-from dds_app.views import logout_view
 
 urlpatterns = [
-
     path('', views.home, name='home'),
-    path('profile/', views.profile_view, name='profile'),
 
     path('operations/', views.CashFlowListView.as_view(), name='cashflow_list'),
     path('operations/create/income/', views.CashFlowCreateIncomeView.as_view(), name='cashflow_create_income'),
@@ -33,9 +29,4 @@ urlpatterns = [
     path('ajax/get_subcategories/', views.get_subcategories, name='get_subcategories'),
     path('ajax/get_quotes/', views.get_quotes, name='get_quotes'),
     path('ajax/get_categories_by_type/', views.get_categories_by_type, name='get_categories_by_type'),
-
-    path('auth/', auth_combined_view, name='auth'),
-
-    path('logout/', logout_view, name='logout'),
-
 ]
