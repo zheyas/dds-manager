@@ -1,0 +1,24 @@
+
+[flake8]
+# Корневая директория проекта (замени при необходимости)
+exclude =
+    .git,
+    __pycache__,
+    .venv,
+    venv,
+    env,
+    build,
+    dist,
+    migrations,
+    */migrations/*,
+    *.pyc,
+    *.egg-info,
+    .eggs,
+    .tox
+
+# Можно указать папки, которые нужно проверять (например, только проект)
+# обычно достаточно exclude!
+# например:
+include = mailsender,mailings,users
+
+max-line-length = 79

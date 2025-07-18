@@ -1,9 +1,11 @@
-from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import login as auth_login
+from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
+
 
 def handle_user_login(request):
     """
-    Возвращает (user, login_form, error): либо залогиненного пользователя, либо None.
+    Возвращает (user, login_form, error):
+    либо залогиненного пользователя, либо None.
     """
     login_form = AuthenticationForm(request, data=request.POST)
     if login_form.is_valid():
@@ -13,9 +15,11 @@ def handle_user_login(request):
     else:
         return None, login_form, "Ошибка логина: проверьте введённые данные"
 
+
 def handle_user_registration(request):
     """
-    Возвращает (user, register_form, error): либо зарегистрированного пользователя, либо None.
+    Возвращает (user, register_form, error):
+    либо зарегистрированного пользователя, либо None.
     """
     register_form = UserCreationForm(request.POST)
     if register_form.is_valid():
@@ -23,4 +27,4 @@ def handle_user_registration(request):
         auth_login(request, user)
         return user, register_form, None
     else:
-        return None, register_form, "Ошибка регистрации: проверьте введённые данные"
+        return (None, register_form, "Ошибка регистрации: проверьте введённые данные")
