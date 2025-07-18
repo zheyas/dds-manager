@@ -8,18 +8,27 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('dds_app', '0001_initial'),
+        ("dds_app", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='cashflow',
-            name='created_at',
-            field=models.DateTimeField(default=django.utils.timezone.now, verbose_name='Дата/Время'),
+            model_name="cashflow",
+            name="created_at",
+            field=models.DateTimeField(
+                default=django.utils.timezone.now, verbose_name="Дата/Время"
+            ),
         ),
         migrations.AlterField(
-            model_name='cashflow',
-            name='subcategory',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, related_name='cashflows', to='dds_app.subcategory', verbose_name='Подкатегория'),
+            model_name="cashflow",
+            name="subcategory",
+            field=models.ForeignKey(
+                blank=True,
+                null=True,
+                on_delete=django.db.models.deletion.CASCADE,
+                related_name="cashflows",
+                to="dds_app.subcategory",
+                verbose_name="Подкатегория",
+            ),
         ),
     ]

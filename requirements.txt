@@ -1,54 +1,117 @@
-#dds_project/urls.py
-from django.contrib import admin
-from django.urls import path, include
+import pytest
+from django.urls import reverse
+from django.contrib.auth.models import User
+from dds_app.models import Category, SubCategory
 
-urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('', include('dds_app.urls')),
-    path('accounts/', include('django.contrib.auth.urls')),
-]
+@pytest.mark.django_db
+def test_home_view(client):
+    url = reverse("home")
+    resp = client.get(url)
+    assert resp.status_code == 200
 
-#users/urls.py
-from django.urls import path
-from . import views
+@pytest.mark.django_db
+def test_auth_combined_view_get(client):
+    url = reverse("auth")
+    resp = client.get(url)
+    assert resp.status_code == 200
 
-urlpatterns = [
-    path("login/", views.auth_combined_view, name="login"),
-    path("logout/", views.logout_view, name="logout"),
-    path("profile/", views.profile_view, name="profile"),
-]
+@pytest.mark.django_db
+def test_registration_success(client):
+    url = reverse("auth")
+    data = {
+        "form_type": "register",
+        "username": "pytestuser",
+        "password1": "pytestP@ss1234",
+        "password2": "pytestP@ss1234",
+    }
+    resp = client.post(url, data, follow=True)
+    assert resp.status_code == 200
+    assert User.objects.filter(username="pytestuser").exists()
 
-#dds_app/urls.py
-from django.urls import path
-from . import views
+@pytest.mark.django_db
+def test_login_success(client, django_user_model):
+    user = django_user_model.objects.create_user(username="pytestlogin", password="pytestpass")
+    url = reverse("auth")
+    data = {
+        "form_type": "login",
+        "username": "pytestlogin",
+        "password": "pytestpass",
+    }
+    resp = client.post(url, data, follow=True)
+    assert resp.status_code == 200
 
-urlpatterns = [
+@pytest.mark.django_db
+def test_login_fail(client):
+    url = reverse("auth")
+    data = {
+        "form_type": "login",
+        "username": "noexist",
+        "password": "noexist",
+    }
+    resp = client.post(url, data)
+    assert resp.status_code == 200
+    assert "Неверные данные" in resp.content.decode() or resp.context['login_form'].errors
 
-    path('', views.home, name='home'),
-    path('profile/', views.profile_view, name='profile'),
 
-    path('operations/', views.CashFlowListView.as_view(), name='cashflow_list'),
-    path('operations/create/income/', views.CashFlowCreateIncomeView.as_view(), name='cashflow_create_income'),
-    path('operations/create/expense/', views.CashFlowCreateExpenseView.as_view(), name='cashflow_create_expense'),
-    path('operations/<int:pk>/edit/', views.CashFlowUpdateView.as_view(), name='cashflow_update'),
-    path('operations/<int:pk>/delete/', views.CashFlowDeleteView.as_view(), name='cashflow_delete'),
+@pytest.mark.django_db
+def test_logout_view(client, django_user_model):
+    user = django_user_model.objects.create_user(username="logout1", password="logout1")
+    client.login(username="logout1", password="logout1")
+    url = reverse("logout")
+    resp = client.post(url, follow=True)
+    assert resp.redirect_chain
+    assert resp.status_code == 200
 
-    path('statuses/', views.StatusListView.as_view(), name='status_list'),
-    path('statuses/create/', views.StatusCreateView.as_view(), name='status_create'),
-    path('statuses/<int:pk>/edit/', views.StatusUpdateView.as_view(), name='status_update'),
-    path('statuses/<int:pk>/delete/', views.StatusDeleteView.as_view(), name='status_delete'),
+@pytest.mark.django_db
+def test_get_quotes(client, monkeypatch):
+    class MockResp:
+        status_code = 200
+        def json(self):
+            return {
+                "Valute": {
+                    "USD": {"Value": 77.23},
+                    "EUR": {"Value": 88.19},
+                }
+            }
+    monkeypatch.setattr("requests.get", lambda *_a, **_k: MockResp())
+    url = reverse("get_quotes")
+    resp = client.get(url)
+    assert resp.status_code == 200
+    js = resp.json()
+    assert "usd_rub" in js and "eur_rub" in js
 
-    path('categories/', views.CategoryListView.as_view(), name='category_list'),
-    path('categories/create/', views.CategoryCreateView.as_view(), name='category_create'),
-    path('categories/<int:pk>/edit/', views.CategoryUpdateView.as_view(), name='category_update'),
-    path('categories/<int:pk>/delete/', views.CategoryDeleteView.as_view(), name='category_delete'),
+@pytest.mark.django_db
+def test_profile_view(client, django_user_model):
+    user = django_user_model.objects.create_user(username="prof", password="profpass")
+    client.login(username="prof", password="profpass")
+    url = reverse("profile")
+    resp = client.get(url)
+    assert resp.status_code == 200
 
-    path('subcategories/', views.SubCategoryListView.as_view(), name='subcategory_list'),
-    path('subcategories/create/', views.SubCategoryCreateView.as_view(), name='subcategory_create'),
-    path('subcategories/<int:pk>/edit/', views.SubCategoryUpdateView.as_view(), name='subcategory_update'),
-    path('subcategories/<int:pk>/delete/', views.SubCategoryDeleteView.as_view(), name='subcategory_delete'),
+@pytest.mark.django_db
+def test_get_subcategories(client, django_user_model):
+    user = django_user_model.objects.create_user(username="abc", password="def")
+    cat = Category.objects.create(name="На еду", type="expense")
+    SubCategory.objects.create(name="KFC", category=cat)
+    client.login(username="abc", password="def")
+    url = reverse("get_subcategories")
+    resp = client.get(url, {"category_id": cat.id})
+    assert resp.status_code == 200
+    assert resp.json()[0]["name"] == "KFC"
 
-    path('ajax/get_subcategories/', views.get_subcategories, name='get_subcategories'),
-    path('ajax/get_quotes/', views.get_quotes, name='get_quotes'),
-    path('ajax/get_categories_by_type/', views.get_categories_by_type, name='get_categories_by_type'),
-]
+@pytest.mark.django_db
+def test_get_categories_by_type(client, django_user_model):
+    user = django_user_model.objects.create_user(username="d1", password="d2")
+    cat = Category.objects.create(name="Дивиденды", type="income")
+    client.login(username="d1", password="d2")
+    url = reverse("get_categories_by_type")
+    resp = client.get(url, {"type": "income"})
+    assert resp.status_code == 200
+    assert resp.json()[0]["name"] =="Дивиденды"
+
+# Проверка split_rub_kop
+def test_split_rub_kop():
+    from dds_app.views import split_rub_kop
+    assert split_rub_kop(1234.56) == ("1 234", "56")
+    assert split_rub_kop(7.01) == ("7", "01")
+    assert split_rub_kop(-0.009) == ("0", "01")
