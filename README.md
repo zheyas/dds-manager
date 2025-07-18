@@ -18,38 +18,39 @@ DDS Менеджер — это веб-приложение для учёта д
 
 1. **Клонируйте репозиторий:**
 
-git clone https://github.com/zheyas/dds-manager.git
-cd dds-manager
+```git clone https://github.com/zheyas/dds-manager.git```
+```cd dds-manager```
 
 2. **Создайте и активируйте виртуальное окружение:**
-
+```
 python -m venv .venv
+```
 source .venv/bin/activate  # или .venv\Scripts\activate на Windows
 
 3. **Установите зависимости:**
-
+```
 pip install -r requirements.txt
-
+```
 4. **Примените миграции и создайте суперпользователя:**
-
+```
 python manage.py migrate
 python manage.py createsuperuser
-
+```
 5. **Запустите локальный сервер:**
-
+```
 python manage.py runserver
-
+```
 6. **Перейдите в браузере:**
 
 http://127.0.0.1:8000/
 
 ## 🧪 Тестирование
-
+```
 pytest dds_app/tests.py
-
+```
 ## 📁 Структура проекта
 
-
+```
 dds/
 │
 ├── dds_project/        # Конфигурация проекта
@@ -68,4 +69,4 @@ dds/
 │── static/         # CSS/JS файлы
 │
 └── manage.py           # Точка входа в Django
-
+```

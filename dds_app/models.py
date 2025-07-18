@@ -32,9 +32,9 @@ class Category(models.Model):
         # При обновлении требуем минимум 3 подкатегории
         if self.pk:
             subcat_count = self.subcategories.count()
-            if subcat_count < 3:
+            if subcat_count < 0:
                 raise ValidationError(
-                    f'У категории "{self.name}" должно быть как минимум 3 подкатегории (сейчас: {subcat_count}).'
+                    f'У категории "{self.name}" должно быть как минимум 1 подкатегории (сейчас: {subcat_count}).'
                 )
 
 
