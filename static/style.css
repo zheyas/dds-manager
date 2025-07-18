@@ -1,0 +1,303 @@
+/* Основные настройки и градиент */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", sans-serif;
+  background: linear-gradient(to bottom right, #28a745, #ffeb3b);
+  color: #222;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+/* Шапка */
+.main-header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 2px solid #ddd;
+}
+
+.main-header .logo {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #2f6b2f;
+}
+
+.main-header nav a {
+  margin-left: 20px;
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+}
+
+.main-header nav a:hover {
+  text-decoration: underline;
+}
+
+/* Контейнер с фиксированной шириной и внутренними отступами */
+.container {
+  max-width: 1000px;
+  width: 100%;
+  margin: auto;
+  padding: 20px;
+  padding-bottom: 100px; /* оставляем место для футера */
+  flex: 1 0 auto;
+  box-sizing: border-box;
+}
+
+/* Карточки и форма — единый стиль */
+.card, .form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto 20px auto; /* Центрируем и отступ снизу */
+  color: #222;
+}
+
+/* Для карточек span с цифрами */
+.card span {
+  display: block;
+  font-size: 1.5em;
+  margin-top: 10px;
+}
+
+.total span { color: #222; }
+.income span { color: green; }
+.expense span { color: red; }
+
+/* Быстрые действия */
+.quick-actions {
+  display: flex;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: 30px;
+  gap: 10px;
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.quick-actions button {
+  flex: 1 1 20%;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  color: white;
+  cursor: pointer;
+  font-size: 1.1em;
+  box-sizing: border-box;
+}
+
+.add-income { background: #28a745; }
+.add-expense { background: #dc3545; }
+.report { background: #ffc107; color: black; }
+.settings { background: #007bff; }
+
+/* Транзакции */
+.transactions h2 {
+  margin-bottom: 10px;
+  font-weight: 700;
+}
+
+.transactions ul {
+  list-style: none;
+  padding: 0;
+  max-width: 1000px;
+  margin: 0 auto 20px;
+}
+
+.transaction {
+  display: flex;
+  justify-content: space-between;
+  background: white;
+  padding: 15px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  font-size: 1em;
+  box-sizing: border-box;
+}
+
+.transaction span {
+  display: block;
+  color: #777;
+  font-size: 0.9em;
+}
+
+.transaction.income .amount {
+  color: green;
+  font-weight: bold;
+}
+
+.transaction.expense .amount {
+  color: red;
+  font-weight: bold;
+}
+
+/* Подвал, приклеенный к низу */
+.main-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 15px;
+  background-color: #2f6b2f;
+  color: white;
+  text-align: center;
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  box-shadow: 0 -3px 10px rgba(0,0,0,0.4);
+  user-select: none;
+  z-index: 10000;
+}
+
+/* Форма: равный стиль с карточками */
+.form-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 480px;
+  margin: 0 auto 40px;
+  color: #222;
+  box-sizing: border-box;
+}
+
+.form-card h2 {
+  text-align: center;
+  margin-bottom: 28px;
+  font-weight: 700;
+  font-size: 1.4em;
+  color: #2f6b2f;
+}
+
+/* Форма сетка */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 22px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  font-weight: 600;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+  color: #2f6b2f;
+}
+
+input, select, textarea {
+  width: 100%;
+  border-radius: 8px;
+  padding: 10px 14px;
+  border: 1.5px solid #28a745;
+  background: #f0f9f0;
+  font-size: 1rem;
+  color: #2f6b2f;
+  font-family: inherit;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: #ffeb3b;
+  background: #fcffd5;
+}
+
+textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.error-text {
+  margin-top: 6px;
+  color: #dc3545;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+/* Кнопки */
+.form-buttons {
+  margin-top: 32px;
+  display: flex;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.btn-save {
+  background: linear-gradient(90deg, #28a745, #74c54f);
+  border: none;
+  padding: 14px 36px;
+  border-radius: 12px;
+  color: white;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(40, 167, 69, 0.6);
+  transition: background 0.3s ease;
+}
+.btn-save:hover {
+  background: linear-gradient(90deg, #5bd24a, #a1d665);
+}
+
+.btn-cancel {
+  background: #ffeb3b;
+  padding: 14px 36px;
+  border-radius: 12px;
+  color: #2f6b2f;
+  font-weight: 700;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+  border: none;
+  box-shadow: 0 3px 7px rgba(180,180,50,0.5);
+}
+.btn-cancel:hover {
+  background: #e4da34;
+  color: #1a3a08;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 600px) {
+  .container {
+    padding: 10px 15px 100px;
+  }
+  .form-card, .card {
+    max-width: 100%;
+    margin: 0 0 20px 0;
+  }
+  .form-buttons {
+    flex-direction: column;
+    gap: 12px;
+  }
+  .btn-save, .btn-cancel {
+    width: 100%;
+    padding: 14px 0;
+  }
+  .quick-actions button {
+    flex-basis: 48%;
+  }
+}

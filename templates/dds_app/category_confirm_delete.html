@@ -1,0 +1,90 @@
+
+{% extends "dds_app/base.html" %}
+
+{% block title %}Удаление категории{% endblock %}
+
+{% block content %}
+<div class="glass-delete-section">
+  <div class="glass-delete-card">
+    <h2 class="glass-delete-title">Удалить категорию?</h2>
+    <p class="glass-delete-text">Вы уверены, что хотите удалить <strong>«{{ object }}»</strong>?</p>
+    <form method="post" class="glass-delete-actions">
+      {% csrf_token %}
+      <button type="submit" class="glass-btn glass-btn-red">Да, удалить</button>
+      <a href="{% url 'category_list' %}" class="glass-btn glass-btn-gray">Отмена</a>
+    </form>
+  </div>
+</div>
+
+<style>
+.glass-delete-section {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 50vh;
+  margin-top: 40px;
+}
+.glass-delete-card {
+  background: rgba(255,255,255,0.19);
+  border-radius: 22px;
+  box-shadow: 0 4px 32px rgba(60,20,20,0.10);
+  border: 1.5px solid rgba(255,255,255,0.25);
+  backdrop-filter: blur(10px) saturate(165%);
+  -webkit-backdrop-filter: blur(10px) saturate(165%);
+  padding: 38px 28px 30px 28px;
+  min-width: 340px;
+  max-width: 450px;
+  text-align: center;
+}
+.glass-delete-title {
+  color: #b51414;
+  font-size: 1.45em;
+  margin-bottom: 22px;
+  font-weight: 700;
+}
+.glass-delete-text {
+  font-size: 1.1em;
+  color: #212121;
+  margin-bottom: 30px;
+  margin-top: 0;
+}
+.glass-delete-actions {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+}
+.glass-btn {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 11px;
+  font-size: 1em;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 2px 9px rgba(22,60,24,0.12);
+  transition: background 0.2s, color 0.14s, box-shadow 0.14s;
+  cursor: pointer;
+  user-select: none;
+}
+.glass-btn-red {
+  background: linear-gradient(90deg,#ff4955,#ff845b 100%);
+}
+.glass-btn-red:hover {
+  background: linear-gradient(90deg,#ff855f,#ffc2b3 100%);
+  color: #aa1922;
+}
+.glass-btn-gray {
+  background: linear-gradient(90deg,#a7afc3,#cbe5ce 100%);
+  color: #1b3830;
+}
+.glass-btn-gray:hover {
+  background: linear-gradient(90deg,#ecefed,#fcfbf8 100%);
+  color: #16361c;
+}
+@media (max-width:600px){
+  .glass-delete-card {padding:14px 5vw 20px 5vw; min-width:0; max-width:99vw;}
+}
+</style>
+{% endblock %}

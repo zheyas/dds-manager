@@ -1,0 +1,179 @@
+{% extends "dds_app/base.html" %}
+
+{% block title %}Список категорий{% endblock %}
+
+{% block content %}
+
+<div class="glass-table-section">
+  <div class="glass-table-header">
+    <h2 class="glass-table-title">Список категорий</h2>
+    <a href="{% url 'category_create' %}" class="glass-btn glass-btn-green">+ Добавить категорию</a>
+  </div>
+  <div class="glass-table-responsive">
+    <table class="glass-table">
+      <thead>
+        <tr>
+          <th>Название</th>
+          <th>Тип</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for category in categories %}
+          <tr>
+            <td>{{ category.name }}</td>
+            <td>{{ category.get_type_display }}</td>
+            <td>
+              <a href="{% url 'category_update' category.id %}" class="glass-btn glass-btn-blue">Редактировать</a>
+              <a href="{% url 'category_delete' category.id %}" class="glass-btn glass-btn-red">Удалить</a>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="3" class="glass-empty">Нет категорий</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+.glass-table-section {
+  max-width: 800px;
+  margin: 40px auto 0;
+  padding: 28px 28px 18px 28px;
+  background: rgba(255, 255, 255, 0.17);
+  backdrop-filter: blur(10px) saturate(155%);
+  -webkit-backdrop-filter: blur(10px) saturate(155%);
+  border-radius: 22px;
+  box-shadow: 0 6px 28px rgba(40,80,52,0.12);
+  border: 1.5px solid rgba(255,255,255,0.37);
+  color: #1c3124;
+}
+
+.glass-table-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 25px;
+  gap: 12px;
+}
+
+.glass-table-title {
+  font-size: 1.7em;
+  letter-spacing: 0.01em;
+  font-weight: bold;
+  margin: 0;
+}
+
+.glass-btn {
+  display: inline-block;
+  padding: 7px 17px;
+  margin-right: 6px;
+  margin-bottom: 4px;
+  border-radius: 10px;
+  font-size: 1em;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  transition: background 0.21s, color 0.15s, box-shadow 0.17s;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 2px 9px rgba(22,60,24,0.12);
+  cursor: pointer;
+  user-select: none;
+}
+
+.glass-btn:last-child { margin-right:0; }
+.glass-btn-green {
+  background: linear-gradient(90deg,#1bb853,#47de74 90%);
+}
+.glass-btn-green:hover {
+  background: linear-gradient(90deg,#21dd66,#68ef95 90%);
+  color: #0a421c;
+}
+.glass-btn-blue {
+  background: linear-gradient(90deg,#2192e6,#30c0ff 100%);
+}
+.glass-btn-blue:hover {
+  background: linear-gradient(90deg,#2ec0f0,#7ce4fc 100%);
+  color: #124271;
+}
+.glass-btn-red {
+  background: linear-gradient(90deg,#ff4955,#ff845b 100%);
+}
+.glass-btn-red:hover {
+  background: linear-gradient(90deg,#ff855f,#ffc2b3 100%);
+  color: #aa1922;
+}
+
+.glass-table-responsive {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.glass-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  min-width: 520px;
+  background: none;
+  color: #072e13;
+  border-radius: 12px;
+  overflow: hidden;
+  font-size: 1.07em;
+}
+.glass-table th, .glass-table td {
+  padding: 13px 14px;
+}
+.glass-table thead th {
+  background: rgba(76, 220, 134, 0.12);
+  color: #129026;
+  font-weight: 700;
+  border-bottom: 1px solid #cceac6;
+  font-size: 1.07em;
+}
+.glass-table tbody tr {
+  background: rgba(255,255,255,0.78);
+  transition: box-shadow 0.14s, background .15s;
+}
+.glass-table tbody tr:hover {
+  background: rgba(246, 247, 197, 0.45);
+  box-shadow: 0 2px 12px rgba(110,210,84,0.15);
+}
+.glass-table td {
+  text-align: left;
+  vertical-align: middle;
+}
+.glass-table td:last-child {
+  text-align: left;
+  white-space: nowrap;
+}
+.glass-empty {
+  text-align: center;
+  color: #aaa;
+  font-style: italic;
+}
+@media (max-width: 600px) {
+.glass-table-section {
+    padding: 10px 5px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(24,64,40,0.16);
+  }
+  .glass-table-header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+  }
+  .glass-table {
+    min-width: 340px;
+    font-size: .96em;
+  }
+  .glass-table th, .glass-table td {
+    padding: 8px 6px;
+  }
+}
+</style>
+
+{% endblock %}

@@ -1,0 +1,143 @@
+ html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    font-family: "Segoe UI", sans-serif;
+    background: linear-gradient(to bottom right, #28a745, #ffeb3b);
+    color: #222;
+  }
+
+  .form-outer {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px;
+    box-sizing: border-box;
+  }
+
+  .form-card {
+    background: white;
+    border-radius: 12px;
+    padding: 28px 32px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    color: #222;
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+
+  .form-card h2 {
+    text-align: center;
+    margin-bottom: 28px;
+    font-weight: 700;
+    font-size: 1.4rem;
+    color: #2f6b2f;
+  }
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 22px;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  label {
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #2f6b2f;
+    font-size: 1.1rem;
+  }
+
+  input, select, textarea {
+    width: 100%;
+    padding: 10px 14px;
+    border-radius: 8px;
+    border: 1.5px solid #28a745;
+    background: #f0f9f0;
+    font-size: 1rem;
+    color: #2f6b2f;
+    font-family: inherit;
+    box-sizing: border-box;
+    transition: border-color 0.3s ease;
+  }
+
+  input:focus, select:focus, textarea:focus {
+    outline: none;
+    border-color: #ffeb3b;
+    background: #fcffd5;
+  }
+
+  textarea {
+    min-height: 88px;
+    resize: vertical;
+  }
+
+  .error-text {
+    margin-top: 6px;
+    color: #dc3545;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .form-buttons {
+    margin-top: 32px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 20px;
+  }
+
+  .btn-save {
+    background: linear-gradient(90deg, #28a745, #74c54f);
+    border: none;
+    padding: 14px 36px;
+    border-radius: 12px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.1rem;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(40, 167, 69, 0.6);
+    transition: background 0.3s ease;
+  }
+  .btn-save:hover {
+    background: linear-gradient(90deg, #5bd24a, #a1d665);
+  }
+
+  .btn-cancel {
+    background: #ffeb3b;
+    padding: 14px 36px;
+    border-radius: 12px;
+    color: #2f6b2f;
+    font-weight: 700;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.3s ease;
+    border: none;
+    box-shadow: 0 3px 7px rgba(180,180,50,0.5);
+  }
+  .btn-cancel:hover {
+    background: #e4da34;
+    color: #1a3a08;
+  }
+
+  @media (max-width: 600px) {
+    .form-card {
+      max-width: 100%;
+      margin: 0 10px;
+    }
+    .form-buttons {
+      flex-direction: column;
+      gap: 12px;
+    }
+    .btn-save, .btn-cancel {
+      width: 100%;
+      padding: 14px 0;
+    }
+  }

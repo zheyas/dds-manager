@@ -1,0 +1,174 @@
+
+{% extends "dds_app/base.html" %}
+{% load widget_tweaks %}
+
+{% block title %}
+  {% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %} подкатегорию
+{% endblock %}
+
+{% block content %}
+<style>
+.glass-form-wrap {
+  max-width: 430px;
+  margin: 54px auto 0;
+  padding: 38px 32px 28px 32px;
+  background: rgba(255,255,255,0.86);
+  border-radius: 26px;
+  box-shadow: 0 8px 36px 0 rgba(64, 80, 20, 0.13), 0 2px 2px rgba(80,120,20, 0.08);
+  border: 1.5px solid rgba(255,255,255,0.32);
+  backdrop-filter: blur(10px) saturate(140%);
+  -webkit-backdrop-filter: blur(10px) saturate(140%);
+}
+
+.glass-form-wrap h3 {
+  text-align: center;
+  margin-bottom: 27px;
+  color: #13953b;
+  font-size: 1.3em;
+  font-weight: bold;
+  letter-spacing: 0.01em;
+}
+
+.glass-form-label {
+  font-weight: 500;
+  color: #15582d;
+  margin-bottom: 5px;
+}
+
+/* Гарантирует одинаковую ширину и внешний вид для input, select, textarea */
+.glass-form-field,
+.glass-form-field:focus,
+select.glass-form-field,
+textarea.glass-form-field {
+  box-sizing: border-box;
+  width: 100%;
+  border-radius: 11px;
+  padding: 11px 14px;
+  border: 1.5px solid #bdf2be;
+  background: rgba(244, 252, 239, 0.98);
+  box-shadow: 0 1.5px 9px rgba(90,190,110,0.06) inset;
+  font-size: 1em;
+  color: #163d19;
+  margin-top: 3px;
+  margin-bottom: 6px;
+  outline: none;
+  transition: box-shadow .17s, background .14s, border-color .16s;
+}
+
+.glass-form-field:focus,
+select.glass-form-field:focus,
+textarea.glass-form-field:focus {
+  border: 1.7px solid #22be46;
+  background: #f8fff0;
+  box-shadow: 0 0 9px #b8efbf90;
+}
+
+.glass-form-field:disabled,
+.glass-form-field[readonly],
+select.glass-form-field:disabled,
+textarea.glass-form-field:disabled {
+  background: #f2f5f3;
+  color: #a1b1a8;
+  border: 1.5px solid #dae5d9;
+}
+
+/* Стилизация стрелки для select */
+select.glass-form-field {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image:
+    linear-gradient(45deg, #b4e5c2 40%, transparent 40%),
+    linear-gradient(135deg, #b4e5c2 40%, transparent 40%);
+  background-position:
+    calc(100% - 18px) calc(1em + 2px),
+    calc(100% - 13px) calc(1em + 2px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 32px;
+}
+
+.glass-form-error {
+  font-size: 13px;
+  color: #dc3545;
+  margin-top: 1px;
+  font-style: italic;
+}
+
+.glass-form-actions {
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+  margin-top: 30px;
+}
+
+.glass-btn {
+  width: 48%;
+  padding: 11px 0;
+  border-radius: 13px;
+  font-weight: 600;
+  font-size: 1em;
+  border: none;
+  outline: none;
+  transition: background 0.17s, color 0.13s, box-shadow 0.13s;
+  letter-spacing: 0.02em;
+  box-shadow: 0 2px 9px rgba(22,60,24,0.11);
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  display: inline-block;
+  text-align: center;
+}
+.glass-btn-green {
+  background: linear-gradient(90deg,#1bb853,#47de74 90%);
+  color: #fff;
+}
+.glass-btn-green:hover {
+  background: linear-gradient(90deg,#26ce65, #92f6ae 100%);
+  color: #233f21;
+  box-shadow: 0 8px 18px rgba(110,230,120,0.10);
+}
+.glass-btn-gray {
+  background: linear-gradient(90deg,#ebeceb,#f6f5ed 100%);
+  color: #177e4b;
+  border: 1.4px solid #c2dec6;
+}
+.glass-btn-gray:hover {
+  background: linear-gradient(90deg,#bff8c4,#fdfbe6 100%);
+  color: #195d3d;
+  border-color: #b1d3c7;
+}
+
+@media (max-width:600px){
+  .glass-form-wrap {max-width:99vw;padding:16px 4vw 10px 4vw;}
+}
+</style>
+
+<div class="glass-form-wrap">
+  <h3>
+    {% if form.instance.pk %}
+      Редактировать подкатегорию
+    {% else %}
+      Добавить подкатегорию
+    {% endif %}
+  </h3>
+
+  <form method="post" novalidate>
+    {% csrf_token %}
+    {% for field in form %}
+      <div style="margin-bottom:17px;">
+        <label for="{{ field.id_for_label }}" class="glass-form-label">{{ field.label }}</label>
+        {{ field|add_class:"glass-form-field" }}
+        {% if field.errors %}
+          <div class="glass-form-error">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="glass-form-actions">
+      <button type="submit" class="glass-btn glass-btn-green">Сохранить</button>
+      <a href="{% url 'subcategory_list' %}" class="glass-btn glass-btn-gray">Отмена</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

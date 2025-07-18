@@ -1,0 +1,145 @@
+{% extends "dds_app/base.html" %}
+
+{% block title %}{% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %} категорию{% endblock %}
+
+{% block content %}
+
+<div class="glass-form-section">
+  <h2 class="glass-form-title">
+    {% if form.instance.pk %}Редактировать{% else %}Добавить{% endif %} категорию
+  </h2>
+
+  <form method="post" class="glass-form">
+    {% csrf_token %}
+    {% for field in form %}
+      <div class="glass-form-group{% if field.errors %} glass-form-error{% endif %}">
+        {% if field.id_for_label %}
+          <label for="{{ field.id_for_label }}" class="glass-form-label">{{ field.label }}</label>
+        {% else %}
+          <label class="glass-form-label">{{ field.label }}</label>
+        {% endif %}
+        {{ field }}
+        {% if field.errors %}
+          <div class="glass-form-field-error">{{ field.errors|join:", " }}</div>
+        {% endif %}
+      </div>
+    {% endfor %}
+
+    <div class="glass-form-buttons">
+      <button type="submit" class="glass-btn glass-btn-green">Сохранить</button>
+      <a href="{% url 'category_list' %}" class="glass-btn glass-btn-gray">Отмена</a>
+    </div>
+  </form>
+</div>
+
+<style>
+.glass-form-section {
+  max-width: 460px;
+  margin: 42px auto 0;
+  padding: 38px 32px 24px 32px;
+  background: rgba(255,255,255,0.19);
+  border-radius: 22px;
+  box-shadow: 0 4px 32px rgba(50,100,50,0.14);
+  border: 1.5px solid rgba(255,255,255,0.30);
+  backdrop-filter: blur(10px) saturate(155%);
+  -webkit-backdrop-filter: blur(10px) saturate(155%);
+}
+.glass-form-title {
+  text-align: center;
+  font-weight: bold;
+  font-size: 1.45em;
+  margin-bottom: 26px;
+  color: #177e36;
+  letter-spacing: 0.01em;
+}
+.glass-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.glass-form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 8px;
+}
+.glass-form-label {
+  font-weight: 500;
+  color: #243d21;
+  margin-bottom: 5px;
+}
+.glass-form-group input,
+.glass-form-group select,
+.glass-form-group textarea {
+  border: none;
+  outline: none;
+  padding: 9px 13px;
+  border-radius: 9px;
+  background: rgba(255,255,255,0.63);
+  color: #18491d;
+  font-size: 1em;
+  box-shadow: 0 1px 7px rgba(110,220,120,0.07) inset;
+  margin-bottom: 3px;
+  transition: box-shadow .16s, background .13s;
+}
+.glass-form-group input:focus,
+.glass-form-group select:focus,
+.glass-form-group textarea:focus {
+  background: rgba(245,255,220,0.82);
+  box-shadow: 0 0 5px #77eb5e70;
+}
+.glass-form-group.glass-form-error input,
+.glass-form-group.glass-form-error select,
+.glass-form-group.glass-form-error textarea {
+  background: rgba(255,220,220,0.55);
+  box-shadow: 0 0 6px #ff857c96;
+}
+.glass-form-field-error {
+  color: #ea3f3f;
+  font-size: .97em;
+  margin-top: 2px;
+  font-style: italic;
+}
+
+.glass-form-buttons {
+  margin-top: 18px;
+  display: flex;
+  gap: 16px;
+  justify-content: space-between;
+}
+
+.glass-btn {
+  display: inline-block;
+  padding: 9px 22px;
+  border-radius: 11px;
+  font-size: 1em;
+  font-weight: 600;
+  border: none;
+  outline: none;
+  text-decoration: none;
+  color: #fff;
+  box-shadow: 0 2px 9px rgba(22,60,24,0.11);
+  transition: background 0.2s, color 0.14s, box-shadow 0.14s;
+  cursor: pointer;
+  user-select: none;
+}
+.glass-btn-green {
+  background: linear-gradient(90deg,#18b853,#47de74 100%);
+}
+.glass-btn-green:hover {
+  background: linear-gradient(90deg,#29e763,#92f6ae 100%);
+  color: #0a421c;
+}
+.glass-btn-gray {
+  background: linear-gradient(90deg,#a7afc3,#cbe5ce 100%);
+  color: #1b3830;
+}
+.glass-btn-gray:hover {
+  background: linear-gradient(90deg,#ecefed,#fcfbf8 100%);
+  color: #16361c;
+}
+@media (max-width:600px){
+  .glass-form-section{max-width:99vw;padding:13px 4vw 10px 4vw;}
+}
+</style>
+
+{% endblock %}

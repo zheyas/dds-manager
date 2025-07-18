@@ -1,0 +1,187 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Вход / Регистрация — ДДС Менеджер</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    .form-toggle {
+      display: none;
+    }
+    .form-toggle.active {
+      display: block;
+    }
+    .switch-wrapper {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 1rem;
+    }
+    .switch-label {
+      margin: 0 10px;
+      font-weight: bold;
+    }
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 34px;
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px; width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+    input:checked + .slider {
+      background-color: #2196F3;
+    }
+    input:checked + .slider:before {
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">ДДС Менеджер</div>
+    <nav>
+      <a href="{% url 'home' %}">Главная</a>
+      <a href="{% url 'cashflow_list' %}">Записи</a>
+      <a href="{% url 'status_list' %}">Справочники</a>
+      <a href="{% url 'profile' %}">Личный кабинет</a>
+    </nav>
+  </header>
+
+  <main class="container d-flex align-items-center justify-content-center" style="min-height: 80vh;">
+    <div class="card shadow p-4 w-100" style="max-width: 420px;">
+
+      <div class="switch-wrapper">
+        <span class="switch-label">Вход</span>
+        <label class="switch">
+          <input type="checkbox" id="toggle-switch" {% if register_form.errors %}checked{% endif %}>
+          <span class="slider"></span>
+        </label>
+        <span class="switch-label">Регистрация</span>
+      </div>
+
+      <!-- login -->
+      <div id="login-form" class="form-toggle {% if not register_form.errors %}active{% endif %}">
+        <h4 class="text-center mb-3">Вход</h4>
+        {% if login_form.errors %}
+          <div class="alert alert-danger">Неверные данные для входа</div>
+        {% endif %}
+        <form method="post" action="{% url 'auth' %}">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="login" />
+          <div class="mb-3">
+            <label for="id_username" class="form-label">Логин</label>
+            <input type="text" name="username" id="id_username" class="form-control" required
+              value="{{ login_form.data.username|default:'' }}" />
+          </div>
+          <div class="mb-3">
+            <label for="id_password" class="form-label">Пароль</label>
+            <input type="password" name="password" id="id_password" class="form-control" required />
+          </div>
+          <button type="submit" class="btn btn-success w-100">Войти</button>
+        </form>
+      </div>
+
+      <!-- register -->
+      <div id="register-form" class="form-toggle {% if register_form.errors %}active{% endif %}">
+        <h4 class="text-center mb-3">Регистрация</h4>
+        {% if register_form.non_field_errors %}
+          <div class="alert alert-danger">
+            {% for err in register_form.non_field_errors %}
+              <div>{{ err }}</div>
+            {% endfor %}
+          </div>
+        {% endif %}
+        <form method="post" action="{% url 'auth' %}">
+          {% csrf_token %}
+          <input type="hidden" name="form_type" value="register" />
+          <div class="mb-3">
+            <label for="id_reg_username" class="form-label">Логин</label>
+            <input type="text" name="username" id="id_reg_username" class="form-control" required
+              value="{{ register_form.data.username|default:'' }}" />
+            {% if register_form.errors.username %}
+              <div class="text-danger small">
+                {{ register_form.errors.username|join:", " }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            <label for="id_email" class="form-label">Email</label>
+            <input type="email" name="email" id="id_email" class="form-control"
+              value="{{ register_form.data.email|default:'' }}" />
+            {% if register_form.errors.email %}
+              <div class="text-danger small">
+                {{ register_form.errors.email|join:", " }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            <label for="id_password1" class="form-label">Пароль</label>
+            <input type="password" name="password1" id="id_password1" class="form-control" required />
+            {% if register_form.errors.password1 %}
+              <div class="text-danger small">
+                {{ register_form.errors.password1|join:", " }}
+              </div>
+            {% endif %}
+          </div>
+          <div class="mb-3">
+            <label for="id_password2" class="form-label">Подтверждение</label>
+            <input type="password" name="password2" id="id_password2" class="form-control" required />
+            {% if register_form.errors.password2 %}
+              <div class="text-danger small">
+                {{ register_form.errors.password2|join:", " }}
+              </div>
+            {% endif %}
+          </div>
+          <button type="submit" class="btn btn-primary w-100">Зарегистрироваться</button>
+        </form>
+      </div>
+
+    </div>
+  </main>
+
+  <footer class="main-footer text-center py-3">
+    © 2025 ДДС Менеджер. Управление денежными средствами стало проще.
+  </footer>
+
+  <script>
+    const toggle = document.getElementById('toggle-switch');
+    const loginForm = document.getElementById('login-form');
+    const registerForm = document.getElementById('register-form');
+
+    toggle.addEventListener('change', function () {
+      if (this.checked) {
+        loginForm.classList.remove('active');
+        registerForm.classList.add('active');
+      } else {
+        loginForm.classList.add('active');
+        registerForm.classList.remove('active');
+      }
+    });
+  </script>
+</body>
+</html>

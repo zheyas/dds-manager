@@ -1,0 +1,68 @@
+{% extends "dds_app/base.html" %}
+
+{% block title %}Удалить подкатегорию{% endblock %}
+
+{% block content %}
+<style>
+  .delete-wrapper {
+    max-width: 600px;
+    margin: 60px auto;
+    padding: 40px;
+    background-color: #fff;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  }
+
+  .delete-wrapper h2 {
+    font-size: 24px;
+    color: #dc3545;
+    margin-bottom: 15px;
+  }
+
+  .delete-wrapper p {
+    font-size: 16px;
+    color: #555;
+  }
+
+  .delete-actions {
+    margin-top: 30px;
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .btn-danger {
+    background-color: #dc3545;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 6px;
+  }
+
+  .btn-secondary {
+    background-color: #adb5bd;
+    color: white;
+    padding: 10px 24px;
+    border-radius: 6px;
+  }
+
+  .btn-danger:hover {
+    background-color: #bb2d3b;
+  }
+
+  .btn-secondary:hover {
+    background-color: #868e96;
+  }
+</style>
+
+<div class="delete-wrapper">
+  <h2>Удалить подкатегорию?</h2>
+  <p>Вы уверены, что хотите удалить <strong>«{{ object }}»</strong>?</p>
+
+  <form method="post" class="delete-actions">
+    {% csrf_token %}
+    <button type="submit" class="btn btn-danger">Да, удалить</button>
+    <a href="{% url 'subcategory_list' %}" class="btn btn-secondary">Отмена</a>
+  </form>
+</div>
+{% endblock %}

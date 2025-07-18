@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Создание операции — ДДС Менеджер</title>
+    <style>
+        html, body {
+            margin: 0; padding: 0; height: 100%; min-height: 100vh;
+            background: linear-gradient(135deg, #49bb43 0%, #f1de47 100%);
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+            color: #f2ffe1;
+            display: flex; flex-direction: column;
+        }
+        .main-header {
+            background: #fff;
+            border-bottom: 1.5px solid #d2ffba;
+            color: #247155;
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-header .logo {
+            font-weight: bold;
+            font-size: 1.5rem;
+            color: #49bb43;
+        }
+        .main-header nav {
+            display: flex;
+            gap: 1.1rem;
+        }
+        .main-header nav a {
+            color: #212529;
+            text-decoration: none;
+            font-weight: 500;
+            transition: background 0.18s;
+            padding: 0.2rem 0.55rem;
+            border-radius: 5px;
+        }
+        .main-header nav a:hover, .main-header nav a.active {
+            background: #e5f6eb;
+            text-decoration: underline;
+        }
+        .wrapper {
+            flex: 1 0 auto;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding: 36px 8px 80px;
+            width: 100%;
+            min-height: 600px;
+        }
+        .form-card {
+            background: #181c23;
+            border-radius: 24px;
+            padding: 38px 34px 32px 34px;
+            width: 100%;
+            max-width: 500px;
+            min-width: 280px;
+            box-sizing: border-box;
+            box-shadow: 0 8px 38px #1b271548, 0 4px 22px #85ff5677;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .form-card h2 {
+            font-weight: 800;
+            font-size: 1.45rem;
+            color: #b2ff6d;
+            margin-bottom: 25px;
+            text-align: center;
+            text-shadow: 0 2px 13px #8afb399c;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 22px;
+            width: 370px;
+            margin: 0 auto;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+        label,
+        .form-label {
+            font-weight: 600;
+            margin-bottom: 8px;
+            font-size: 1.08rem;
+            color: #b3ff99;
+            text-shadow: 0 2px 6px #b2ff6d66;
+            letter-spacing: 0.5px;
+        }
+        input, select, textarea {
+            width: 100%;
+            border-radius: 13px;
+            padding: 13px 15px;
+            border: 1.7px solid #43fa97;
+            background: linear-gradient(135deg, #161d17 80%, #42fa97 100%);
+            box-shadow: 0 1px 17px #43fa972c;
+            font-size: 1.07rem;
+            color: #caffd9;
+            font-family: inherit;
+            min-width: 0;
+            box-sizing: border-box;
+            margin-bottom: 0;
+            transition:
+                background 0.24s,
+                border-color 0.25s,
+                color 0.23s,
+                box-shadow 0.15s;
+        }
+        input:focus, select:focus, textarea:focus {
+outline: none;
+            border-color: #b2ff6d;
+            background: linear-gradient(135deg, #1b4630 55%, #8fff99 100%);
+            color: #fafdff;
+            box-shadow: 0 2px 14px #b2ff6d69;
+        }
+        textarea { min-height: 100px; resize: vertical; }
+        .error-text {
+            margin-top: 4px;
+            color: #e94c4c;
+            font-weight: 600;
+            font-size: 0.99rem;
+        }
+        .form-buttons {
+            margin-top: 32px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 18px;
+            width: 370px;
+        }
+        .btn-save {
+            background: linear-gradient(90deg, #15c335 0%, #6bdf88 100%);
+            border: none;
+            padding: 14px 38px;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 1.13rem;
+            cursor: pointer;
+            box-shadow: 0 4px 12px #80ffac75;
+            transition: background 0.25s, box-shadow 0.25s;
+        }
+        .btn-save:hover {
+            background: linear-gradient(90deg,#91ffbc 0%, #129d29 100%);
+            color: #f4fff7;
+            box-shadow: 0 7px 18px #74fdc989;
+        }
+        .btn-cancel {
+            background: linear-gradient(93deg,#469bc6 0%, #48a4ad 100%);
+            padding: 14px 38px;
+            border-radius: 15px;
+            color: #fff;
+            font-weight: 700;
+            border: none;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px #61d0fa3c;
+            transition: background 0.2s;
+        }
+        .btn-cancel:hover {
+            background: linear-gradient(88deg,#82e5fe 0%, #287e93 100%);
+            color: #e5faff;
+        }
+
+        .alert {
+            margin: 0 0 12px 0;
+            padding: 12px 18px;
+            border-radius: 9px;
+            background: #f0ffd3;
+            color: #333;
+            font-weight: bold;
+            font-size: 1rem;
+            border: 1.5px solid #b1eb71;
+            box-shadow: 0 1px 5px #b2ff6d40;
+        }
+        .alert.error, .alert-danger { background: #ffe4e6; color: #981414; border-color: #e94c4c; }
+        .alert.success, .alert-success { background: #e3ffd4; color: #267b09; border-color: #7ddb4f; }
+
+        @media (max-width: 510px) {
+            .wrapper { padding: 10px 2vw 80px;}
+            .form-card {padding: 3vw;}
+            .form-grid, .form-buttons { width: 100% !important; }
+            .form-buttons { flex-direction: column; gap: 14px;}
+            .btn-save, .btn-cancel { width: 100%; padding: 14px 0;}
+        }
+        footer.main-footer {
+            flex-shrink: 0;
+            background: linear-gradient(90deg, #247155, #49bb43);
+            color: white;
+            text-align: center;
+            padding: 15px 10px;
+            font-size: 15px;
+            font-weight: 600;
+            user-select: none;
+            box-shadow: 0 -2px 11px #0003;
+            position: fixed;
+            bottom: 0; left: 0; width: 100%; z-index: 1000;
+            border-radius: 0 0 12px 12px;
+        }
+    </style>
+</head>
+<body>
+<header class="main-header">
+    <div class="logo">ДДС Менеджер</div>
+    <nav>
+        <a href="{% url 'home' %}">Главная</a>
+        <a href="{% url 'cashflow_list' %}">Записи</a>
+        <a href="{% url 'status_list' %}">Справочники</a>
+        <a href="{% url 'profile' %}">Личный кабинет</a>
+    </nav>
+</header>
+
+<div class="wrapper">
+    <div class="form-card" role="form" aria-label="Создание операции">
+        <h2>Создание операции</h2>
+
+        {% if messages %}
+          <ul style="width:100%;margin:0 0 18px 0;padding:0;list-style:none;">
+            {% for message in messages %}
+              <li class="alert {% if message.tags %}{{ message.tags }}{% endif %}">{{ message }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+
+        <form method="post" novalidate>
+
+            {% csrf_token %}
+            {{ form.type }}
+
+            {% if form.non_field_errors %}
+              <div class="error-text" style="width:100%;margin-bottom:16px;">
+                  {{ form.non_field_errors|join:", " }}
+              </div>
+            {% endif %}
+
+            <div class="form-grid">
+                <div class="form-group">
+                    {{ form.title.label_tag }}
+                    {{ form.title }}
+                    {% if form.title.errors %}
+                        <div class="error-text">{{ form.title.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.created_at.label_tag }}
+                    {{ form.created_at }}
+                    {% if form.created_at.errors %}
+                        <div class="error-text">{{ form.created_at.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.status.label_tag }}
+                    {{ form.status }}
+                    {% if form.status.errors %}
+                        <div class="error-text">{{ form.status.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.category.id_for_label }}">Категория:</label>
+                    <select name="{{ form.category.name }}" id="{{ form.category.id_for_label }}" class="form-select">
+                        <option value="">---------</option>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if form.category.value|stringformat:"s" == category.id|stringformat:"s" %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.category.errors %}
+                        <div class="error-text">{{ form.category.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="{{ form.subcategory.id_for_label }}">Подкатегория:</label>
+                    <select name="{{ form.subcategory.name }}" id="{{ form.subcategory.id_for_label }}" class="form-select">
+                        <option value="">---------</option>
+                        {% for subcategory in subcategories %}
+                            <option value="{{ subcategory.id }}" {% if form.subcategory.value|stringformat:"s" == subcategory.id|stringformat:"s" %}selected{% endif %}>
+                                {{ subcategory.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                    {% if form.subcategory.errors %}
+                        <div class="error-text">{{ form.subcategory.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                <div class="form-group">
+                    {{ form.amount.label_tag }}
+                    {{ form.amount }}
+                    {% if form.amount.errors %}
+                        <div class="error-text">{{ form.amount.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                {% if type == 'expense' %}
+                <div class="form-group">
+                    {{ form.cashback_percent.label_tag }}
+                    {{ form.cashback_percent }}
+                    {% if form.cashback_percent.errors %}
+                        <div class="error-text">{{ form.cashback_percent.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+                {% endif %}
+
+                <div class="form-group full-width">
+                    {{ form.comment.label_tag }}
+                    {{ form.comment }}
+                    {% if form.comment.errors %}
+                        <div class="error-text">{{ form.comment.errors|join:", " }}</div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <div class="form-buttons">
+                <a href="{% url 'cashflow_list' %}" class="btn-cancel">Отмена</a>
+                <button type="submit" class="btn-save">Сохранить</button>
+            </div>
+        </form>
+
+    </div>
+</div>
+<footer class="main-footer">
+    © 2025 ДДС Менеджер. Управление денежными средствами стало проще.
+</footer>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const categorySelect = document.getElementById('{{ form.category.id_for_label }}');
+    const subcategorySelect = document.getElementById('{{ form.subcategory.id_for_label }}');
+    if (categorySelect && subcategorySelect) {
+        categorySelect.addEventListener('change', function() {
+            const categoryId = this.value;
+            subcategorySelect.innerHTML = '<option value="">---------</option>';
+            if (categoryId) {
+                fetch('{% url "get_subcategories" %}?category_id=' + categoryId)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.forEach(function(subcat) {
+                            const option = document.createElement('option');
+                            option.value = subcat.id;
+                            option.textContent = subcat.name;
+                            subcategorySelect.appendChild(option);
+                        });
+                    })
+                    .catch(err => console.error('Ошибка загрузки подкатегорий:', err));
+            }
+        });
+    }
+});
+</script>
+</body>
+</html>

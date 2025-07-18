@@ -1,0 +1,229 @@
+{% extends 'dds_app/base.html' %}
+{% load static %}
+
+{% block title %}Справочники{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+
+<style>
+  .glass-card {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: #000;
+    cursor: pointer;
+    user-select: none;
+    transition: box-shadow 0.3s, border-color 0.3s, background 0.3s;
+  }
+  .glass-card.selected {
+    box-shadow: 0 0 15px 3px #0d6efd;
+    border-color: #0d6efd;
+    background: rgba(255, 255, 255, 0.4);
+  }
+  .card-item {
+    padding: 0.5rem 1rem;
+    margin-bottom: 0.5rem;
+    background: rgba(255, 255, 255, 0.8);
+    border-radius: 8px;
+    user-select: none;
+  }
+  .card-item.selected {
+    background-color: #0d6efd;
+    color: white;
+  }
+  .action-buttons {
+    margin-top: 1rem;
+  }
+  /* Стили для ссылок-заголовков */
+  .section-header a {
+    text-decoration: none;
+    color: inherit;
+  }
+  .section-header a:hover {
+    text-decoration: underline;
+    color: #0d6efd;
+  }
+</style>
+
+<h2 class="mb-4 text-center">Справочники</h2>
+
+<div class="row g-4" id="main-selection">
+  <!-- Статусы -->
+  <div class="col-md-4">
+    <div class="glass-card p-4 h-100" data-type="status">
+      <h4 class="text-center mb-3 section-header">
+        <a href="{% url 'status_list' %}">Статусы</a>
+      </h4>
+      {% for status in statuses %}
+        <div class="card-item" data-id="{{ status.id }}" data-type="status">{{ status.name }}</div>
+      {% empty %}
+        <p class="text-muted">Нет статусов</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Категории -->
+  <div class="col-md-4">
+    <div class="glass-card p-4 h-100" data-type="category">
+      <h4 class="text-center mb-3 section-header">
+        <a href="{% url 'category_list' %}">Категории</a>
+      </h4>
+      {% for category in categories %}
+        <div class="card-item" data-id="{{ category.id }}" data-type="category">
+          {{ category.get_type_display }} — {{ category.name }}
+        </div>
+      {% empty %}
+        <p class="text-muted">Нет категорий</p>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Подкатегории -->
+  <div class="col-md-4">
+    <div class="glass-card p-4 h-100" data-type="subcategory">
+      <h4 class="text-center mb-3 section-header">
+        <a href="{% url 'subcategory_list' %}">Подкатегории</a>
+      </h4>
+      {% for category in categories %}
+        <div class="mb-3">
+          <strong>{{ category.name }}</strong>
+          <div class="ms-3 mt-1">
+            {% for sub in category.subcategories.all %}
+              <div class="card-item" data-id="{{ sub.id }}" data-type="subcategory">{{ sub.name }}</div>
+            {% empty %}
+              <em>Нет подкатегорий</em>
+            {% endfor %}
+          </div>
+        </div>
+      {% empty %}
+        <p class="text-muted">Нет категорий</p>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+
+<!-- Кнопки действий -->
+<div class="action-buttons text-center mt-4" id="action-buttons" style="display:none;">
+  <button id="btn-add" class="btn btn-success me-2">Добавить</button>
+  <button id="btn-edit" class="btn btn-primary me-2" disabled>Изменить</button>
+  <button id="btn-delete" class="btn btn-danger" disabled>Удалить</button>
+  <button id="btn-back" class="btn btn-secondary ms-4">Назад</button>
+</div>
+
+<script>
+  (function(){
+    const mainSelection = document.getElementById('main-selection');
+    const actionButtons = document.getElementById('action-buttons');
+    const btnAdd = document.getElementById('btn-add');
+    const btnEdit = document.getElementById('btn-edit');
+    const btnDelete = document.getElementById('btn-delete');
+    const btnBack = document.getElementById('btn-back');
+
+    let selectedItem = null;
+
+    function clearSelection() {
+      selectedItem = null;
+      actionButtons.style.display = 'none';
+      btnEdit.disabled = true;
+      btnDelete.disabled = true;
+      // Убрать выделение у всех карточек
+      document.querySelectorAll('.card-item.selected').forEach(el => el.classList.remove('selected'));
+      // Показать все колонки
+      Array.from(mainSelection.children).forEach(col => {
+        col.style.display = '';
+      });
+    }
+
+    function showOnlySelectedType(type) {
+      Array.from(mainSelection.children).forEach(col => {
+        const card = col.querySelector('.glass-card');
+        if(card.dataset.type === type){
+          col.style.display = '';
+        } else {
+          col.style.display = 'none';
+        }
+      });
+    }
+
+    mainSelection.addEventListener('click', function(e){
+      const target = e.target.closest('.card-item');
+      if(!target) return;
+
+      if(selectedItem === target) return;
+
+      clearSelection();
+
+      selectedItem = target;
+      selectedItem.classList.add('selected');
+
+      actionButtons.style.display = 'block';
+      btnEdit.disabled = false;
+      btnDelete.disabled = false;
+
+      const type = selectedItem.dataset.type;
+      showOnlySelectedType(type);
+    });
+
+    btnAdd.addEventListener('click', function(){
+      if(!selectedItem){
+        alert('Выберите раздел (Статусы, Категории или Подкатегории) для добавления.');
+        return;
+      }
+      const type = selectedItem.dataset.type;
+      if(type === 'status') {
+        window.location.href = "{% url 'status_create' %}";
+      } else if(type === 'category') {
+        window.location.href = "{% url 'category_create' %}";
+      } else if(type === 'subcategory') {
+        window.location.href = "{% url 'subcategory_create' %}";
+      }
+    });
+
+    btnEdit.addEventListener('click', function(){
+      if(!selectedItem) return;
+      const type = selectedItem.dataset.type;
+      const id = selectedItem.dataset.id;
+      if(!id){
+        alert('Выберите элемент для редактирования.');
+        return;
+      }
+      let url = '';
+      if(type === 'status'){
+        url = "{% url 'status_update' 0 %}".replace('0', id);
+      } else if(type === 'category'){
+        url = "{% url 'category_update' 0 %}".replace('0', id);
+      } else if(type === 'subcategory'){
+        url = "{% url 'subcategory_update' 0 %}".replace('0', id);
+      }
+      window.location.href = url;
+    });
+
+    btnDelete.addEventListener('click', function(){
+      if(!selectedItem) return;
+      const type = selectedItem.dataset.type;
+      const id = selectedItem.dataset.id;
+      if(!id){
+        alert('Выберите элемент для удаления.');
+        return;
+      }
+      let url = '';
+      if(type === 'status'){
+        url = "{% url 'status_delete' 0 %}".replace('0', id);
+      } else if(type === 'category'){
+        url = "{% url 'category_delete' 0 %}".replace('0', id);
+      } else if(type === 'subcategory'){
+        url = "{% url 'subcategory_delete' 0 %}".replace('0', id);
+      }
+      window.location.href = url;
+    });
+
+    btnBack.addEventListener('click', function(){
+      clearSelection();
+    });
+  })();
+</script>
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends "dds_app/base.html" %}
+
+{% block title %}Удаление статуса{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+  <div class="alert alert-warning text-center p-4 rounded shadow-sm">
+    <h2 class="mb-3">Удалить статус?</h2>
+    <p class="lead">Вы уверены, что хотите удалить <strong>«{{ object }}»</strong>?</p>
+
+    <form method="post" class="d-flex justify-content-center gap-3 mt-4">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Да, удалить</button>
+      <a href="{% url 'status_list' %}" class="btn btn-secondary">Отмена</a>
+    </form>
+  </div>
+</div>
+{% endblock %}

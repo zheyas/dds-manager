@@ -1,0 +1,285 @@
+{% extends "dds_app/base.html" %}
+
+{% block content %}
+<div class="dds-content-block">
+  <h2 class="dds-title">Движение денежных средств</h2>
+  <form method="get" class="dds-filter-form mb-4">
+    <div class="dds-filter-grid">
+      <div>
+        <label for="date_from" class="form-label">Дата с</label>
+        <input type="date" id="date_from" name="date_from" value="{{ filter.date_from }}" class="form-control">
+      </div>
+      <div>
+        <label for="date_to" class="form-label">Дата по</label>
+        <input type="date" id="date_to" name="date_to" value="{{ filter.date_to }}" class="form-control">
+      </div>
+      <div>
+        <label for="status" class="form-label">Статус</label>
+        <select id="status" name="status" class="form-select">
+          <option value="">Все</option>
+          {% for s in statuses %}
+            <option value="{{ s.id }}" {% if filter.status|stringformat:"s" == s.id|stringformat:"s" %}selected{% endif %}>{{ s.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="type" class="form-label">Тип</label>
+        <select id="type" name="type" class="form-select">
+          <option value="">Все</option>
+          {% for key, val in type_choices %}
+            <option value="{{ key }}" {% if filter.type == key %}selected{% endif %}>{{ val }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="category" class="form-label">Категория</label>
+        <select id="category" name="category" class="form-select">
+          <option value="">Все</option>
+          {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if filter.category|stringformat:"s" == cat.id|stringformat:"s" %}selected{% endif %}>{{ cat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div>
+        <label for="subcategory" class="form-label">Подкатегория</label>
+        <select id="subcategory" name="subcategory" class="form-select">
+          <option value="">Все</option>
+          {% for subcat in subcategories %}
+            <option value="{{ subcat.id }}" {% if filter.subcategory|stringformat:"s" == subcat.id|stringformat:"s" %}selected{% endif %}>{{ subcat.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="dds-btn-group">
+        <button type="submit" class="dds-btn dds-btn-success">Фильтровать</button>
+        <a href="{% url 'cashflow_create_income' %}" class="dds-btn dds-btn-income">+ Доход</a>
+        <a href="{% url 'cashflow_create_expense' %}" class="dds-btn dds-btn-expense">- Расход</a>
+      </div>
+    </div>
+  </form>
+
+  <div class="dds-table-wrap table-responsive">
+    <table class="table table-dark table-hover mb-0">
+      <thead>
+        <tr>
+          <th>Дата</th>
+          <th>Статус</th>
+          <th>Тип</th>
+          <th>Категория</th>
+          <th>Подкатегория</th>
+          <th>Сумма</th>
+          <th>Комментарий</th>
+          <th>Действия</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for cash in cashflows %}
+        <tr>
+          <td>{{ cash.created_at|date:"d.m.Y" }}</td>
+          <td>{{ cash.status }}</td>
+          <td>{{ cash.get_type_display }}</td>
+          <td>{{ cash.category }}</td>
+          <td>{{ cash.subcategory }}</td>
+          <td>₽ {{ cash.amount }}</td>
+          <td>{{ cash.comment }}</td>
+          <td class="dds-action-cell">
+            <a href="{% url 'cashflow_update' cash.id %}" class="btn
+dds-btn-action btn-sm dds-btn-edit" title="Редактировать">✎</a>
+            <a href="{% url 'cashflow_delete' cash.id %}" class="btn dds-btn-action btn-sm dds-btn-del" title="Удалить">✕</a>
+          </td>
+        </tr>
+      {% empty %}
+        <tr>
+          <td colspan="8" class="text-center text-muted py-4">Нет операций</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<style>
+/* Карточка */
+.dds-content-block {
+  background: #21242b;
+  border-radius: 32px;
+  box-shadow: 0 10px 44px #0005;
+  padding: 2.3rem 2rem 2.3rem 2rem;
+  color: #fff;
+  max-width: 1050px;
+  margin: 2rem auto 3rem auto;
+}
+
+/* Титул */
+.dds-title {
+  color: #c4ff88;
+  font-weight: 800;
+  letter-spacing: 1.2px;
+  text-align: center;
+  margin-bottom: 30px;
+  font-size: 2rem;
+  text-shadow: 0 2px 18px #1bff505a;
+  font-family: 'Georgia', serif;
+}
+
+/* Сетка фильтров (2 строки × 3+1, кнопки в одной строке правее) */
+.dds-filter-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 20px 16px;
+  align-items: end;
+}
+.dds-filter-grid > div {
+  min-width: 130px;
+}
+
+.dds-btn-group {
+  display: flex;
+  flex-direction: row;
+  gap: 12px;
+  grid-column: 4;
+  grid-row: 2/3;
+  justify-content: flex-end;
+  margin-bottom: 6px;
+}
+
+/* Лейблы и поля */
+.dds-filter-form .form-label {
+  color: #b1eb71;
+  font-weight: 600;
+  margin-bottom: 7px;
+  font-family: "Georgia", serif;
+  font-size: 1.09rem;
+  text-shadow: 0 2px 8px #0009;
+}
+
+/* Градиент инпутов и селектов */
+.dds-filter-form .form-control, .dds-filter-form .form-select {
+  background: linear-gradient(135deg, #161d17 70%, #425943 100%);
+  color: #aaffc8;
+  border-radius: 11px;
+  border: 1.5px solid #425943;
+  font-size: 1.13rem;
+  padding: 9px 16px;
+  box-shadow: 0 2px 12px #42594329;
+  margin-bottom: 0;
+  transition: border 0.19s, box-shadow 0.22s;
+}
+.dds-filter-form .form-control:focus, .dds-filter-form .form-select:focus {
+  background: linear-gradient(135deg, #1b4630 60%, #87ffb9 100%);
+  color: #fff;
+  border-color: #b1eb71;
+  box-shadow: 0 1px 9px #b2ff6d40;
+}
+
+.dds-btn {
+  padding: 10px 24px;
+  font-size: 1.12rem;
+  border: none;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .19s, color .15s, box-shadow .14s;
+  text-decoration: none;
+  color: #fff;
+  margin-right: 0;
+  box-shadow: 0 2px 9px #0002;
+}
+.dds-btn-success {
+  background: linear-gradient(90deg, #23d74a 0%, #55f58d 100%);
+  color: #fff !important;
+}
+.dds-btn-success:hover   { background: linear-gradient(90deg, #60fd9f 0%, #149236 100%);}
+.dds-btn-income  { background: linear-gradient(90deg, #45aaff 0%, #5ccaff 100%); }
+.dds-btn-income:hover    { background: linear-gradient(90deg, #87d4ff 0%, #1364b5 100%);}
+.dds-btn-expense { background: linear-gradient(90deg, #ff5252 0%, #e36c5b 100%);}
+.dds-btn-expense:hover   { background: linear-gradient(90deg, #fa7b6b 0%, #a22406 100%);}
+
+/* Таблица стилизация */
+.dds-table-wrap {
+  margin-top: 36px;
+  border-radius: 17px;
+  overflow-x: auto;
+  background: #232833;
+  box-shadow: 0 1px 11px #365e2b28;
+}
+.table-dark th, .table-dark td { color: #e6ffe6 !important; }
+.table-dark thead th {
+  background: linear-gradient(90deg, #19411c 60%, #4fff87 180%);
+  color: #c2ff9b !important;
+  font-weight: 900;
+  font-family: "Georgia", serif;
+  font-size: 1.08em;
+  border-bottom: 2px solid #aafe80 !important;
+  text-shadow: 0 1px 6px #539c037e;
+}
+.table-dark tbody td {
+  min-height: 40px;
+  padding-top: 9px !important;
+  padding-bottom: 9px !important;
+  vertical-align: middle !important;
+}
+.table-dark tbody tr {
+  background: #23272f !important;
+  border-bottom: 1px solid #446533 !important;
+  transition: background 0.13s;
+}
+.table-dark tbody tr:hover td {
+  background: #18461f !important;
+  color: #a3ffad !important;
+}
+
+/* Для столбца "Действия" — увеличиваем высоту и центровка */
+.dds-action-cell {
+  min-height: 50px;
+  vertical-align: middle !important;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+align-items: center;
+  gap: 5px;
+}
+.dds-action-cell .dds-btn-action {
+  min-width: 38px;
+  min-height: 38px;
+  line-height: 25px;
+}
+
+/* Кнопки действий */
+.dds-btn-action {
+  border-radius: 8px;
+  font-size: 1.1em;
+  font-weight: 700;
+  padding: 7px 16px;
+  margin-right: 2px;
+  transition: background .2s, color .15s;
+  border: none;
+  box-shadow: 0 2px 9px #4fff8726;
+  outline: none;
+  background: #232a31;
+}
+
+.dds-btn-edit { color: #aaff9e; border: 2px solid #85ff55;}
+.dds-btn-edit:hover { background: #26701d; color: #fff; border-color:#fff;}
+.dds-btn-del { color: #fd7d7d; border: 2px solid #ff4d58;}
+.dds-btn-del:hover { background: #6f271a; color: #fff; border-color:#fff; }
+
+@media (max-width: 1200px) {
+  .dds-content-block {max-width: 100vw;}
+  .dds-filter-grid {grid-template-columns: repeat(2, 1fr);}
+  .dds-btn-group {grid-column: 2;}
+}
+@media (max-width: 700px) {
+  .dds-filter-grid {
+    grid-template-columns: 1fr;
+    gap: 13px;
+  }
+  .dds-btn-group {grid-column: 1; justify-content: flex-start;}
+}
+
+/* Сохраняем паддинг самой карточки на малых экранах */
+@media (max-width: 600px) {
+  .dds-content-block {padding: 0.6rem;}
+  .dds-title {font-size: 1.1rem;}
+}
+</style>
+{% endblock %}

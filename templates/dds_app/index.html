@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="ru">
+{% load static %}
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ДДС Менеджер — Главная</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      background-color: #f8f9fa;
+      color: #212529;
+    }
+    .main-header {
+      background-color: white;
+      color: #212529;
+      padding: 1rem 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #ddd;
+    }
+    .logo {
+      font-weight: bold;
+      font-size: 1.5rem;
+    }
+
+    /* Меню */
+    .main-menu { display: flex; }
+    .main-menu ul {
+      list-style: none;
+      display: flex;
+      gap: 40px;
+      margin: 0; padding: 0;
+      align-items: center;
+    }
+    .main-menu li { position: relative; }
+    .main-menu a, .profile-link {
+      color: #212529;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 1.07rem;
+      padding: 4px 0;
+      transition: color 0.2s;
+      cursor: pointer;
+    }
+    .main-menu a:hover, .profile-link:hover { color: #188820; }
+    .arrow { font-size: 0.8em; margin-left: 5px; }
+
+.profile-dropdown {
+  display: none;
+  position: absolute;
+  top: 110%;
+  right: 0;
+  min-width: 120px;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.07);
+  z-index: 100;
+  padding: 6px 0;
+}
+    .profile-menu:hover .profile-dropdown,
+.profile-menu:focus-within .profile-dropdown {
+  display: block;
+}
+    .profile-menu.open .profile-dropdown {
+  display: block;
+}
+    .profile-dropdown li { width: 100%; }
+    .profile-dropdown li a {
+      display: block;
+      padding: 10px 18px;
+      color: #d50017;
+      text-decoration: none;
+      border-radius: 0;
+      font-weight: 500;
+      font-size: 1rem;
+    }
+    .profile-dropdown li a:hover {
+      background: #f3f3f3;
+    }
+
+    .container {
+      flex-grow: 1;
+      max-width: 900px;
+      margin: 2rem auto;
+      padding: 0 1rem;
+    }
+    .summary {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      margin-bottom: 2rem;
+    }
+    .card.income, .card.expense {
+      flex: 1;
+      padding: 1.5rem;
+      border-radius: 8px;
+      color: white;
+      text-align: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+    }
+    .card.income { background-color: #218838; }
+    .card.expense { background-color: #c82333; }
+    .card.income span,
+    .card.expense span {
+      display: block;
+      margin-top: 0.5rem;
+      font-size: 2.4rem;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    }
+    .quick-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 2rem;
+    }
+    .quick-actions button {
+      flex: 1 1 180px;
+      padding: 0.75rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+      color: white;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+    }
+    .quick-actions .add-income { background-color: #218838; }
+    .quick-actions .add-income:hover { background-color: #19692c; }
+    .quick-actions .add-expense { background-color: #c82333; }
+    .quick-actions .add-expense:hover { background-color: #8b1a25; }
+    .quick-actions .report { background-color: #0069d9; }
+    .quick-actions .report:hover { background-color: #004a9f; }
+    .quick-actions .settings { background-color: #6c757d; }
+    .quick-actions .settings:hover { background-color: #495057; }
+    .transactions h2 {
+      margin-bottom: 1rem;
+      font-weight: 700;
+      text-align: center;
+      color: #343a40;
+    }
+    .cashback {
+      color: #326916;
+      font-size: 1.0rem;
+      margin-left: 8px;
+    }
+    .transactions ul {
+      list-style: none;
+      padding: 0;
+      max-width: 600px;
+      margin: 0 auto;
+    }
+    .transaction {
+      display: flex;
+      justify-content: space-between;
+      padding: 0.75rem 1rem;
+      border-radius: 6px;
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      background-color: white;
+    }
+    .transaction.income {
+      border-left: 6px solid #218838;
+      color: #155724;
+    }
+    .transaction.expense {
+      border-left: 6px solid #c82333;
+      color: #721c24;
+    }
+    .transaction div span {
+      font-weight: 400;
+      font-size: 0.85rem;
+      color: #6c757d;
+      margin-left: 0.5rem;
+    }
+    .amount {
+      font-weight: 700;
+      font-size: 1.3rem;
+    }
+    .main-footer {
+      background-color: #145214;
+      color: white;
+      text-align: center;
+      padding: 1rem 2rem;
+      font-weight: 500;
+      margin-top: auto;
+    }
+    /* Modal */
+    .modal {
+      position: fixed;
+      left:0; top:0; width:100vw; height: 100vh;
+      background: rgba(0,0,0,0.18);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 500;
+    }
+    .modal-content {
+      background: #fff;
+      border-radius: 10px;
+      padding: 30px 30px 24px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.21);
+      text-align: center;
+    }
+    .modal-content button {
+      margin: 10px 15px 0 15px;
+      padding: 8px 35px;
+      border-radius: 7px;
+      border: none;
+      background: #f5f5f5;
+      cursor: pointer;
+    }
+    .modal-content button#confirmLogout {
+      background: #d01c1c;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+  <header class="main-header">
+    <div class="logo">ДДС Менеджер</div>
+
+    <nav class="main-menu">
+  <ul>
+    <li><a href="{% url 'home' %}">Главная</a></li>
+    <li><a href="{% url 'cashflow_list' %}">Записи</a></li>
+    <li><a href="{% url 'status_list' %}">Справочники</a></li>
+
+    {% if user.is_authenticated %}
+    <li>
+      <form method="post" action="{% url 'logout' %}" style="margin: 0;">
+        {% csrf_token %}
+        <button type="submit" style="
+          background: none;
+          border: none;
+          padding: 4px 0;
+          font-weight: 500;
+          font-size: 1.07rem;
+          color: #d50017;
+          cursor: pointer;
+        ">Выход</button>
+      </form>
+    </li>
+    {% else %}
+    <li><a href="{% url 'login' %}" style="color:#188820;font-weight:bold;">Войти</a></li>
+    {% endif %}
+  </ul>
+</nav>
+
+  </header>
+
+  <main class="container">
+    {% load humanize %}
+    <section class="summary">
+      <div class="card income">
+        Доходы за месяц<br>
+        <span>
+          {{ income_rub }} руб. {{ income_kop }} коп.
+          <span style="font-size:1.2rem;color:#e2ffb0;font-weight:400;">
+            +{{ expense_cashback_rub }} руб. {{ expense_cashback_kop }} кэшбэк
+          </span>
+        </span>
+      </div>
+      <div class="card expense">
+        Расходы за месяц<br>
+        <span>
+          {{ expense_rub }} руб. {{ expense_kop }} коп.
+        </span>
+      </div>
+    </section>
+
+    <section class="quick-actions">
+      <button class="add-income" onclick="location.href='{% url 'cashflow_create_income' %}'">+ Добавить доход</button>
+      <button class="add-expense" onclick="location.href='{% url 'cashflow_create_expense' %}'">- Добавить расход</button>
+      <button class="report" onclick="location.href='{% url 'cashflow_list' %}'">История</button>
+      <button class="settings" onclick="location.href='{% url 'status_list' %}'">Настройки</button>
+    </section>
+
+    <section class="transactions">
+      <h2>Последние операции</h2>
+      <ul>
+        {% for op in latest_ops %}
+          <li class="transaction {{ op.type }}">
+            <div>
+              {{ op.title }} <span>{{ op.created_at|date:"d.m.Y" }}</span>
+            </div>
+            <div class="amount">
+              {% if op.type == 'income' %}
+                +₽ {{ op.amount|floatformat:2 }}
+              {% else %}
+                -₽ {{ op.amount|floatformat:2 }}
+                {% if op.cashback_floor > 0 %}
+                  <span class="cashback">+{{ op.cashback_floor }} ₽ кэшбэк</span>
+                {% endif %}
+              {% endif %}
+            </div>
+          </li>
+        {% empty %}
+          <li class="text-center text-muted">Нет операций за месяц</li>
+        {% endfor %}
+      </ul>
+    </section>
+  </main>
+
+  <footer class="main-footer">
+    © 2025 ДДС Менеджер. Управление денежными средствами стало проще.
+  </footer>
+</body>
+</html>
