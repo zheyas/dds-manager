@@ -17,9 +17,10 @@ DDS Менеджер — это веб-приложение для учёта д
 ## 🛠️ Установка
 
 1. **Клонируйте репозиторий:**
-
-```git clone https://github.com/zheyas/dds-manager.git```
-```cd dds-manager```
+```
+git clone https://github.com/zheyas/dds-manager.git
+cd dds-manager
+```
 
 2. **Создайте и активируйте виртуальное окружение:**
 ```

@@ -268,7 +268,7 @@
         <span>
           {{ income_rub }} руб. {{ income_kop }} коп.
           <span style="font-size:1.2rem;color:#e2ffb0;font-weight:400;">
-            +{{ expense_cashback_rub }} руб. {{ expense_cashback_kop }} кэшбэк
+            +{{ expense_cashback_rub }} ₽ кешбэк
           </span>
         </span>
       </div>
@@ -301,7 +301,7 @@
               {% else %}
                 -₽ {{ op.amount|floatformat:2 }}
                 {% if op.cashback_floor > 0 %}
-                  <span class="cashback">+{{ op.cashback_floor }} ₽ кэшбэк</span>
+                  <span class="cashback">+{{ op.cashback_floor }} ₽ кешбэк</span>
                 {% endif %}
               {% endif %}
             </div>
